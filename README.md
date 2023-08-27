@@ -4,6 +4,6 @@
 
 - Uživatelská část
   -  Hra se spustí hned po spuštění programu
-  -  Nová hra se sputní po záčknutí 'r'
+  -  Nová hra se sputní po zmáčknutí 'r'
 - Programátorská část
   - 
