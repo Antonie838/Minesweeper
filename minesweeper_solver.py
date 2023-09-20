@@ -346,36 +346,32 @@ def mainloop():
             stav_hry = 0
             a = True            
         stav_hry = 1
-        for object in objects:
-            if a:
+        for object in objects:                                                      # průchod přes všechny pole
+            if a:                                                                   # funkce u polí proběhnou pouze běhěm hry
                 object.grafika()
                 object.otocit() 
                 object.vlajka()
                 plocha.vlna(object)
                 solver(object)
-            if stav_hry == -1:
+            if stav_hry == -1:                                                      # odkrytí všech min po přohře
                 if object.miny_okolo == -1 or object.miny_okolo == -2:
                     object.otocen = True
                     object.grafika()
-            if object.miny_okolo != -1:
+            if object.miny_okolo != -1:                                             # smyčka vyhodnocující stav_hry
                 if object.otocen == False:
                     if stav_hry != -1:
                         stav_hry = 0
             if stav_hry == 0:
                 continue
-        if stav_hry == -1 and start == True and run == True:
+        if stav_hry == -1 and start == True and run == True:                        # prohra
             a = False
             prohra = True
-            # print('Prohrál jsi.')
-            print(start)
-            print(stav_hry)
             hrat_znova(-1)
-        if stav_hry == 1 and run == True:
+        if stav_hry == 1 and run == True:                                           # výhra
             vyhra = True
             a = False
-            # print('vyhrál jsi!')
             hrat_znova(1)
-        for x in hry:
+        for x in hry:                                                               # grafika hracího menu
             if stav_hry != 0:
                 x.grafika()
         pg.display.update()
