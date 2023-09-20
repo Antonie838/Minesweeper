@@ -401,32 +401,31 @@ def mainloop():
             stav_hry = 1
             a = True            
         stav_hry = 1
-        for object in objects:
-            if a:
+        for object in objects:                                                      # průchod přes všechny pole
+            if a:                                                                   # funkce u polí proběhnou pouze běhěm hry
                 object.grafika()
                 object.otocit() 
                 object.vlajka()
                 plocha.vlna(object)
-            if stav_hry == -1 and start == True:
+            if stav_hry == -1 and start == True:                                    # odkrytí všech min po přohře
                 if object.miny_okolo == -1 or object.miny_okolo == -2:
                     object.otocen = True
                     object.grafika()
-            if object.miny_okolo != -1:
+            if object.miny_okolo != -1:                                             # smyčka vyhodnocující stav_hry
                 if object.otocen == False:
                     if stav_hry != -1:
                         stav_hry = 0
             if stav_hry == 0:
                 continue
-        if stav_hry == -1 and start == True:
+        if stav_hry == -1 and start == True:                                        # prohra
             a = False
             prohra = True
             hrat_znova(-1)
-        if stav_hry == 1 and start == True:
+        if stav_hry == 1 and start == True:                                         # výhra
             a = False
             vyhra = True
-            
             hrat_znova(1)
-        for x in hry:
+        for x in hry:                                                               # grafika hracího menu
             if stav_hry != 0:
                 x.grafika()
             x.easy.zmacknout()
