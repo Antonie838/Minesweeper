@@ -5,7 +5,7 @@ vel_okna = 800
 okno = pg.display.set_mode((vel_okna, vel_okna))
 pg.display.set_caption('MineSweeper')
 
-
+# globální proměnné
 vel = 40
 pocet = 16
 zacatek_pole = (vel_okna/2)-((vel*(pocet)+(pocet-2)*5)/2)
@@ -37,7 +37,23 @@ vyhra_obr = pg.image.load('obr/vyhra_r.png').convert_alpha()
 prohra_obr = pg.image.load('obr/prohra_r.png').convert_alpha()
 
 class hrat_znova:
+    '''
+    Třída reprezentuje menu s volbou dalších her.
+    ...
+    Atributy
+    --------
+    vysledek : int
+        Číslo určující výsledek hry, kde 1 znamená výhru a -1 prohru.
+    '''
     def __init__(self, vysledek):
+        '''
+        Vrací objekt třídy hrat_znova.
+        ...
+        Parametry
+        ---------
+        vysledek : int
+            Číslo určující výsledek hry, kde 1 znamená výhru a -1 prohru.
+        '''
         self.vysledek = vysledek
         self.sirka = 500
         self.vyska = 150                
@@ -46,15 +62,48 @@ class hrat_znova:
         self.rect = pg.Rect(self.x, self.y, self.sirka, self.vyska)
         hry.append(self)
     def grafika(self):
+        '''
+        Vykreslí menu s příslušnými popisky a tlačítky.
+        '''
         if self.vysledek == 1:       #stav_hry
             okno.blit(vyhra_obr, self.rect)
         if self.vysledek == -1:       #stav_hry
             okno.blit(prohra_obr, self.rect)
 
-        
-
 class pole:
+    '''
+    Třída reprezentující jedno hrací políčko.
+    ...
+    Atributy
+    --------
+    x : int
+        x-souřadnice v pixelech
+    y : int
+        y-souřadnice v pixelech
+    souradnice_x : int
+        x-souřadnice v matici plocha_
+    souradnice_y : int
+        y-souřadnice v matici plocha_
+    miny_okolo : int
+        počet sousedních min
+    '''
     def __init__(self, x: int, y: int, souradnice_x, souradnice_y, miny_okolo: int):
+        '''
+        Vrací objekt třídy pole.
+        ...
+        Parametry
+        ---------
+        x : int
+            x-souřadnice v pixelech
+        y : int
+            y-souřadnice v pixelech
+        souradnice_x : int
+            x-souřadnice v matici plocha_
+        souradnice_y : int
+            y-souřadnice v matici plocha_
+        miny_okolo : int
+            počet sousedních min
+        '''
         self.x = x
         self.y = y
         self.souradnice_x = souradnice_x
@@ -81,6 +130,9 @@ class pole:
         if self.souradnice_x == self.souradnice_y == 0 or self.souradnice_x == self.souradnice_y == pocet - 1 or (self.souradnice_x == 0 and self.souradnice_y == pocet - 1) or (self.souradnice_x == pocet - 1 and self.souradnice_y == 0):
             self.sousedi = 3
     def grafika(self):
+        '''
+        Vykreslí grafiku pole.
+        '''
         if self.otocen == False:
             okno.blit(zakryty, self.rect)
             if self.vlajka_ == True:
@@ -111,6 +163,9 @@ class pole:
             elif self.miny_okolo == 8:
                 okno.blit(odkryty_8, self.rect)
     def otocit(self):
+        '''
+        Odkryje hodnotu pole.
+        '''
         global stav_hry
         global start
         mouse_pos = pg.mouse.get_pos()
@@ -129,7 +184,9 @@ class pole:
                     if not self.zmacknut:
                         self.zmacknut = True
     def vlajka(self):
-        '''vykresní vlajku'''
+        '''
+        Vykresní vlajku a otazník.
+        '''
         mouse_pos = pg.mouse.get_pos()
         if self.rect.collidepoint(mouse_pos):
             if pg.mouse.get_pressed()[2]:
@@ -150,7 +207,23 @@ class pole:
                 self.zmacknut = False
     
 class herni_plocha:
+    '''
+    Třída reprezentující celou herní plochu.
+    ...
+    Atributy
+    --------
+    resta_mina : list
+        souřadnice pole, na kterém nebude mina
+    '''
     def __init__(self, resta_mina = [-1, -1]):
+        '''
+        Vrací objekt třídy herni_plocha.
+        ...
+        Parametry
+        ---------
+        resta_mina : list
+            souřadnice pole, na kterém nebude mina
+        '''
         self.resta_mina = resta_mina
         # vytvoření plochy
         for i in range(pocet):
@@ -178,10 +251,16 @@ class herni_plocha:
                                         plocha_[i][j].miny_okolo += 1
 
     def vlna(self, obj: pole):
-        '''vytvoří vlnu volných políček po kliknutí'''
+        '''
+        Vytvoří vlnu volných políček po kliknutí.
+        ...
+        Parametry
+        ---------
+        obj : pole
+        '''
         obj_x = obj.souradnice_x
         obj_y = obj.souradnice_y
-        if plocha_[obj_x][obj_y].otocen == False:     # jestli je vedle mě jedno odkrytý s číslem nula a já nejsem -1 tak se odkreju 
+        if plocha_[obj_x][obj_y].otocen == False:
             if obj.miny_okolo != -1:
                 for i in range(-1, 2):
                     if obj.souradnice_x + i >= 0 and obj.souradnice_x + i < pocet:
@@ -191,7 +270,14 @@ class herni_plocha:
                                     if plocha_[obj_x+i][obj_y+j].miny_okolo == 0:
                                         obj.otocen = True
 
-def solver(obj):
+def solver(obj: pole):
+    '''
+    Funkce samostatně řešící hru.
+    ...
+    Parametry
+    ---------
+    obj : pole
+    '''
     global plocha_
     obj_x = obj.souradnice_x
     obj_y = obj.souradnice_y
@@ -214,6 +300,9 @@ def solver(obj):
                                             obj.otocen = True
 
 def mainloop():
+    '''
+    Funkce reprezentující hlavní hrací smyčku.
+    '''
     okno.fill((38, 13, 52))
     plocha = herni_plocha()
     global start
@@ -230,7 +319,7 @@ def mainloop():
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 run = False
-            if prohra or vyhra:
+            if prohra or vyhra:                                                    # nová hra
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_r:
                         run = False
