@@ -4,7 +4,7 @@ pg.init()
 pg.display.set_caption('MineSweeper')
 
 
-
+# globální proměnné
 vel = 40
 pocet = 16
 vel_okna = (pocet*vel + (pocet - 1)*5) + 80
@@ -17,7 +17,6 @@ obtiznost = 'nic'
 stav_hry = 1
 start = False
 cas = pg.time.Clock()
-aeiou = False
 
 # Grafika
 pozadi = pg.image.load('obr/pozadi.png').convert()
@@ -45,7 +44,39 @@ konec = pg.image.load('obr/konec.png').convert_alpha()
 
 
 class button:
+    '''
+    Třída reprezentuje dimenze tlačítka.
+    ...
+    Atributy
+    --------
+    x : int
+        x-souřadnice v pixelech
+    y : int
+        y-souřadnice v pixelech
+    sirka : int
+        šířka v pixelech
+    vyska : int
+        výška v pixelech
+    obtiz : str
+        Vyhodnocuje obtížnost hry, která se následovně pustí, tj. 'easy', 'medium', 'hard', nebo 'konec', kde 'konec' značí konec hry.
+    '''
     def __init__(self, x, y, sirka, vyska, obtiz):
+        '''
+        Vrací objekt třídy button.
+        ...
+        Parametry
+        ---------
+        x : int
+            x-souřadnice v pixelech
+        y : int
+            y-souřadnice v pixelech
+        sirka : int
+            šířka v pixelech
+        vyska : int
+            výška v pixelech
+        obtiz : str
+            Vyhodnocuje obtížnost hry, která se následovně pustí, tj. 'easy', 'medium', 'hard', nebo 'konec', kde 'konec' značí konec hry.
+        '''
         self.sirka = sirka
         self.vyska = vyska              
         self.x = x
@@ -55,6 +86,9 @@ class button:
         self.rect = pg.Rect(self.x, self.y, self.sirka, self.vyska)
         self.zmacknut = False
     def zmacknout(self):
+        '''
+        Zmáčkne tlačítko a uloží příslušnou obtížnost.
+        '''
         global obtiznost
         mouse_pos = pg.mouse.get_pos()
         if self.rect.collidepoint(mouse_pos):
@@ -66,9 +100,24 @@ class button:
             else:
                 self.zmacknut = False
                 
-
 class hrat_znova:
+    '''
+    Třída reprezentuje menu s volbou dalších her.
+    ...
+    Atributy
+    --------
+    vysledek : int
+        Číslo určující výsledek hry, kde 0 znamená první spuštění hry, 1 výhru a -1 prohru.
+    '''
     def __init__(self, vysledek):
+        '''
+        Vrací objekt třídy hrat_znova.
+        ...
+        Parametry
+        ---------
+        vysledek : int
+            Číslo určující výsledek hry, kde 0 znamená první spuštění hry, 1 výhru a -1 prohru.
+        '''
         self.vysledek = vysledek
         self.sirka = 500
         self.vyska = 250
@@ -81,6 +130,9 @@ class hrat_znova:
         self.konec = button(vel_okna/2 - 190, 430, 380, 40, 'konec')
         hry.append(self)
     def grafika(self):
+        '''
+        Vykreslí menu s příslušnými popisky a tlačítky.
+        '''
         if self.vysledek == 0:       #stav_hry
             okno.blit(menu, self.rect)
         if self.vysledek == 1:       #stav_hry
@@ -93,7 +145,39 @@ class hrat_znova:
         okno.blit(konec, self.konec)
 
 class pole:
-    def __init__(self, x: int, y: int, souradnice_x, souradnice_y, miny_okolo: int):
+    '''
+    Třída reprezentující jedno hrací políčko.
+    ...
+    Atributy
+    --------
+    x : int
+        x-souřadnice v pixelech
+    y : int
+        y-souřadnice v pixelech
+    souradnice_x : int
+        x-souřadnice v matici plocha_
+    souradnice_y : int
+        y-souřadnice v matici plocha_
+    miny_okolo : int
+        počet sousedních min
+    '''
+    def __init__(self, x: int, y: int, souradnice_x: int, souradnice_y: int, miny_okolo: int):
+        '''
+        Vrací objekt třídy pole.
+        ...
+        Parametry
+        ---------
+        x : int
+            x-souřadnice v pixelech
+        y : int
+            y-souřadnice v pixelech
+        souradnice_x : int
+            x-souřadnice v matici plocha_
+        souradnice_y : int
+            y-souřadnice v matici plocha_
+        miny_okolo : int
+            počet sousedních min
+        '''
         self.x = x
         self.y = y
         self.souradnice_x = souradnice_x
@@ -109,6 +193,9 @@ class pole:
         self.rect = pg.Rect(self.x, self.y, self.vel, self.vel)
         objects.append(self)
     def grafika(self):
+        '''
+        Vykreslí grafiku pole.
+        '''
         if self.otocen == False:
             okno.blit(zakryty, self.rect)
             if self.vlajka_ == True:
@@ -139,7 +226,9 @@ class pole:
             elif self.miny_okolo == 8:
                 okno.blit(odkryty_8, self.rect)
     def otocit(self):
-        '''odkryje políčko'''
+        '''
+        Odkryje hodnotu pole.
+        '''
         global stav_hry
         global start
         mouse_pos = pg.mouse.get_pos()
@@ -160,7 +249,9 @@ class pole:
             else:
                 self.zmacknut = False
     def vlajka(self):
-        '''vykresní vlajku'''
+        '''
+        Vykresní vlajku a otazník.
+        '''
         mouse_pos = pg.mouse.get_pos()
         if self.rect.collidepoint(mouse_pos):
             if pg.mouse.get_pressed()[2]:
@@ -181,7 +272,23 @@ class pole:
                 self.zmacka_vlajka = False
     
 class herni_plocha:
+    '''
+    Třída reprezentující celou herní plochu.
+    ...
+    Atributy
+    --------
+    resta_mina : list
+        souřadnice pole, na kterém nebude mina
+    '''
     def __init__(self, resta_mina = [-1, -1]):
+        '''
+        Vrací objekt třídy herni_plocha.
+        ...
+        Parametry
+        ---------
+        resta_mina : list
+            souřadnice pole, na kterém nebude mina
+        '''
         self.resta_mina = resta_mina
         for i in range(pocet):
             radek = []
@@ -207,10 +314,16 @@ class herni_plocha:
                                         plocha_[i][j].miny_okolo += 1
 
     def vlna(self, obj: pole):
-        '''vytvoří vlnu volných políček po kliknutí'''
+        '''
+        Vytvoří vlnu volných políček po kliknutí.
+        ...
+        Parametry
+        ---------
+        obj : pole
+        '''
         obj_x = obj.souradnice_x
         obj_y = obj.souradnice_y
-        if plocha_[obj_x][obj_y].otocen == False:     # jestli je vedle mě jedno odkrytý s číslem nula a já nejsem -1 tak se odkreju 
+        if plocha_[obj_x][obj_y].otocen == False:
             if obj.miny_okolo != -1:
                 for i in range(-1, 2):
                     if obj.souradnice_x + i >= 0 and obj.souradnice_x + i < pocet:
@@ -221,6 +334,9 @@ class herni_plocha:
                                         obj.otocen = True
 
 def mainloop():
+    '''
+    Funkce reprezentující hlavní hrací smyčku.
+    '''
     global okno
     global vel_okna
     global start
